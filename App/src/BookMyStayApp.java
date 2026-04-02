@@ -1,26 +1,21 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BookMyStayApp {
+public class UseCase7AddOnServiceSelection {
     public static void main(String[] args) {
 
-        Queue<String> requests = new LinkedList<>();
-        requests.add("Customer_Alwyn");
-        requests.add("Customer_John");
-
-        Set<String> allocatedRooms = new HashSet<>();
-
-        System.out.println("--- Processing Room Allocations ---");
-
-        while (!requests.isEmpty()) {
-            String customer = requests.poll();
-            String roomId = "ROOM-" + (100 + allocatedRooms.size() + 1);
-            if (allocatedRooms.add(roomId)) {
-                System.out.println("SUCCESS: " + customer + " assigned to " + roomId);
-            } else {
-                System.out.println("ERROR: Room " + roomId + " is already occupied!");
+        List<String> selectedServices = new ArrayList<>();
+        selectedServices.add("High-Speed WiFi");
+        selectedServices.add("Buffet Breakfast");
+        selectedServices.add("Late Check-out");
+        System.out.println("--- Selected Add-on Services ---");
+        if (selectedServices.isEmpty()) {
+            System.out.println("No extra services selected.");
+        } else {
+            for (int i = 0; i < selectedServices.size(); i++) {
+                System.out.println((i + 1) + ". " + selectedServices.get(i));
             }
         }
-
-        System.out.println("\nTotal Rooms Allocated Today: " + allocatedRooms.size());
+        System.out.println("\nTotal services added: " + selectedServices.size());
     }
 }
