@@ -1,39 +1,50 @@
-// Custom Exception for Fail-Fast handling
-class BookingValidationException extends Exception {
-    public BookingValidationException(String message) {
+mport java.util.*;
+class IllegalCancellationException extends Exception {
+    public IllegalCancellationException(String message) {
         super(message);
     }
 }
 
 public class BookMyStayApp {
-    private static int availableSuites = 1; // Example inventory state
+
+    private static int suiteInventory = 5;
+    private static Stack<String> releasedRooms = new Stack<>();
+    private static Map<String, String> activeBookings = new HashMap<>(); // ID -> RoomType
 
     public static void main(String[] args) {
+
+        activeBookings.put("BK-003", "Suite");
+        suiteInventory = 4;
+
+        System.out.println("Initial Inventory: " + suiteInventory);
+
         try {
-            // Simulated Guest Input
-            processBooking("Alice", "Penthouse"); // This should trigger a validation error
-        } catch (BookingValidationException e) {
-            // Graceful Failure Handling: Display meaningful message without crashing
-            System.err.println("[VALIDATION ERROR] " + e.getMessage());
+
+            cancelBooking("BK-003");
+            cancelBooking("BK-999");
+        } catch (IllegalCancellationException e) {
+            System.err.println("[CANCELLATION REJECTED] " + e.getMessage());
         }
 
-        // System remains stable and can process the next request
-        System.out.println("System status: Running safely.");
+        System.out.println("Final Inventory: " + suiteInventory);
+        System.out.println("Rooms ready for re-assignment: " + releasedRooms);
     }
 
-    public static void processBooking(String customer, String roomType) throws BookingValidationException {
-        // 1. Validate Room Type (Input Validation)
-        if (!roomType.equals("Suite") && !roomType.equals("Double") && !roomType.equals("Single")) {
-            throw new BookingValidationException("Invalid room type: " + roomType);
+    public static void cancelBooking(String bookingId) throws IllegalCancellationException {
+        if (!activeBookings.containsKey(bookingId)) {
+            throw new IllegalCancellationException("Booking ID " + bookingId + " not found or already cancelled.");
         }
 
-        // 2. Guard System State (Inventory Check)
-        if (roomType.equals("Suite") && availableSuites <= 0) {
-            throw new BookingValidationException("No inventory available for: " + roomType);
+        String roomType = activeBookings.get(bookingId);
+
+        if (roomType.equals("Suite")) {
+            suiteInventory++;
+
+            releasedRooms.push("ROOM-" + bookingId.split("-")[1]);
         }
 
-        // 3. Update State (Only reached if validation passes)
-        if (roomType.equals("Suite")) availableSuites--;
-        System.out.println("Booking successful for " + customer);
+        activeBookings.remove(bookingId);
+
+        System.out.println("[SUCCESS] Cancellation processed for " + bookingId);
     }
 }
