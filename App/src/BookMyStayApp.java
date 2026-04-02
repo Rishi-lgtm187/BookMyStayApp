@@ -1,6 +1,10 @@
+ feature/UC3-roominventorymanagement
+import java.util.HashMap;
+
  UC11
 import java.util.*;
 import java.util.concurrent.*;
+ dev
 
  UC10
 mport java.util.*;
@@ -24,13 +28,22 @@ import java.util.List;
 
 UC8
 public class BookMyStayApp {
+ feature/UC3-roominventorymanagement
+    public static void main(String[] args) {
+        HashMap<String, Integer> inventory = new HashMap<>();
+
  UC11
     private static int suiteInventory = 2;
     private static final Object lock = new Object();
     private static List<String> history = Collections.synchronizedList(new ArrayList<>());
+dev
 
-    public static void main(String[] args) throws InterruptedException {
+        inventory.put("Single Room", 5);
+        inventory.put("Double Room", 3);
+        inventory.put("Suite Room", 2);
 
+ feature/UC3-roominventorymanagement
+        System.out.println("--- Hotel Room Inventory ---");
  UC10
 
     private static int suiteInventory = 5;
@@ -65,33 +78,10 @@ dev
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
         String[] guests = {"Alwyn", "John", "Alice", "Bob", "Charlie"};
+ dev
 
-        System.out.println("Initial Inventory: " + suiteInventory);
-        System.out.println("--- Starting Concurrent Bookings ---");
-
-        for (String guest : guests) {
-            executor.execute(() -> bookRoom(guest));
-        }
-
-        executor.shutdown();
-        executor.awaitTermination(5, TimeUnit.SECONDS);
-
-        System.out.println("--- All Requests Processed ---");
-        System.out.println("Final Inventory: " + suiteInventory);
-        System.out.println("Final History Size: " + history.size());
-    }
-
-    public static void bookRoom(String guest) {
-        synchronized (lock) {
-            if (suiteInventory > 0) {
-                try { Thread.sleep(100); } catch (InterruptedException e) {}
-
-                suiteInventory--;
-                history.add("Guest: " + guest + " | Status: SUCCESS");
-                System.out.println("[CONFIRMED] Room allocated to: " + guest);
-            } else {
-                System.out.println("[FAILED] No rooms left for: " + guest);
-            }
+        for (String roomType : inventory.keySet()) {
+            System.out.println(roomType + " Available: " + inventory.get(roomType));
         }
  UC11
 
