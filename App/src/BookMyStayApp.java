@@ -1,21 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class UseCase7AddOnServiceSelection {
+public class BookMyStayApp {
     public static void main(String[] args) {
+        List<String> historyReport = new ArrayList<>();
+        historyReport.add("ID: BK-001 | Customer: Alwyn | Room: Single | Status: PAID");
+        historyReport.add("ID: BK-002 | Customer: John  | Room: Double | Status: PENDING");
+        historyReport.add("ID: BK-003 | Customer: Alice | Room: Suite  | Status: PAID");
 
-        List<String> selectedServices = new ArrayList<>();
-        selectedServices.add("High-Speed WiFi");
-        selectedServices.add("Buffet Breakfast");
-        selectedServices.add("Late Check-out");
-        System.out.println("--- Selected Add-on Services ---");
-        if (selectedServices.isEmpty()) {
-            System.out.println("No extra services selected.");
+        System.out.println("======= FINAL BOOKING HISTORY REPORT =======");
+
+        if (historyReport.isEmpty()) {
+            System.out.println("No history found for today.");
         } else {
-            for (int i = 0; i < selectedServices.size(); i++) {
-                System.out.println((i + 1) + ". " + selectedServices.get(i));
+            for (String record : historyReport) {
+                System.out.println("[RECORD] " + record);
             }
         }
-        System.out.println("\nTotal services added: " + selectedServices.size());
+
+        System.out.println("============================================");
+        System.out.println("Total Records Processed: " + historyReport.size());
     }
 }
