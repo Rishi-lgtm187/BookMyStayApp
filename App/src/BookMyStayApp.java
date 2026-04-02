@@ -1,26 +1,57 @@
+import java.io.*;
 import java.util.*;
 
 public class BookMyStayApp {
+    private static final String DATA_FILE = "system_state.txt";
+    private static int suiteInventory = 10;
+    private static List<String> history = new ArrayList<>();
+
     public static void main(String[] args) {
+        loadSystemState();
 
-        Queue<String> requests = new LinkedList<>();
-        requests.add("Customer_Alwyn");
-        requests.add("Customer_John");
+        System.out.println("Current Inventory after startup: " + suiteInventory);
+        if (suiteInventory > 0) {
+            suiteInventory--;
+            history.add("BK-" + System.currentTimeMillis() + " | Status: SUCCESS");
+            System.out.println("New booking processed.");
+        }
+        saveSystemState();
+        System.out.println("System state persisted. Safe to exit.");
+    }
 
-        Set<String> allocatedRooms = new HashSet<>();
+    private static void saveSystemState() {
+        try (PrintWriter out = new PrintWriter(new FileWriter(DATA_FILE))) {
 
-        System.out.println("--- Processing Room Allocations ---");
+            out.println(suiteInventory);
 
-        while (!requests.isEmpty()) {
-            String customer = requests.poll();
-            String roomId = "ROOM-" + (100 + allocatedRooms.size() + 1);
-            if (allocatedRooms.add(roomId)) {
-                System.out.println("SUCCESS: " + customer + " assigned to " + roomId);
-            } else {
-                System.out.println("ERROR: Room " + roomId + " is already occupied!");
+            for (String record : history) {
+                out.println(record);
             }
+        } catch (IOException e) {
+            System.err.println("Failed to save state: " + e.getMessage());
+        }
+    }
+
+    private static void loadSystemState() {
+        File file = new File(DATA_FILE);
+        if (!file.exists()) {
+            System.out.println("No previous state found. Starting fresh.");
+            return;
         }
 
-        System.out.println("\nTotal Rooms Allocated Today: " + allocatedRooms.size());
+        try (Scanner scanner = new Scanner(file)) {
+
+            if (scanner.hasNextLine()) {
+                suiteInventory = Integer.parseInt(scanner.nextLine());
+            }
+            while (scanner.hasNextLine()) {
+                history.add(scanner.nextLine());
+            }
+            System.out.println("Successfully restored " + history.size() + " records.");
+        } catch (Exception e) {
+            System.err.println("State file corrupted. Reverting to defaults.");
+            suiteInventory = 10;
+            history.clear();
+        }
     }
 }
