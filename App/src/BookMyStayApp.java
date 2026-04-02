@@ -1,23 +1,32 @@
+ UC5
+import java.util.HashSet;
+import java.util.LinkedList;
+
  UC3
 import java.util.HashMap;
+ dev
 
 public class BookMyStayApp {
-    public static void main(String[] args) {
-        HashMap<String, Integer> inventory = new HashMap<>();
-        inventory.put("Single Room", 5);
-        inventory.put("Double Room", 0);
-        inventory.put("Suite Room", 2);
+    public static void main(String[] var0) {
+        LinkedList var1 = new LinkedList();
+        var1.add("Customer_Alwyn");
+        var1.add("Customer_John");
+        HashSet var2 = new HashSet();
+        System.out.println("--- Processing Room Allocations ---");
 
-        System.out.println("--- Searching for Available Rooms ---");
-        boolean found = false;
-        for (String type : inventory.keySet()) {
-            int count = inventory.get(type);
-
-            if (count > 0) {
-                System.out.println("Found: " + type + " (" + count + " left)");
-                found = true;
+        while(!var1.isEmpty()) {
+            String var3 = (String)var1.poll();
+            int var10000 = 100 + var2.size();
+            String var4 = "ROOM-" + (var10000 + 1);
+            if (var2.add(var4)) {
+                System.out.println("SUCCESS: " + var3 + " assigned to " + var4);
+            } else {
+                System.out.println("ERROR: Room " + var4 + " is already occupied!");
             }
         }
+
+ UC5
+        System.out.println("\nTotal Rooms Allocated Today: " + var2.size());
 
         if (!found) {
             System.out.println("Sorry, no rooms available at the moment.");
@@ -80,5 +89,6 @@ public class BookMyStayApp {
         suite.displayRoomDetails(suiteRoomAvailability);
 
         System.out.println("Application terminated."); dev
+dev
     }
 }
