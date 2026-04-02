@@ -2,8 +2,18 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class UseCase7AddOnServiceSelection {
+public class BookMyStayApp {
     public static void main(String[] args) {
+        List<String> historyReport = new ArrayList<>();
+        historyReport.add("ID: BK-001 | Customer: Alwyn | Room: Single | Status: PAID");
+        historyReport.add("ID: BK-002 | Customer: John  | Room: Double | Status: PENDING");
+        historyReport.add("ID: BK-003 | Customer: Alice | Room: Suite  | Status: PAID");
+
+ feature/UC8-bookinghistoryandreporting
+        System.out.println("======= FINAL BOOKING HISTORY REPORT =======");
+
+        if (historyReport.isEmpty()) {
+            System.out.println("No history found for today.");
 
  feature/UC5-bookingrequest
 import java.util.HashSet;
@@ -56,11 +66,17 @@ public class BookMyStayApp {
         System.out.println("--- Selected Add-on Services ---");
         if (selectedServices.isEmpty()) {
             System.out.println("No extra services selected.");
+ dev
         } else {
-            for (int i = 0; i < selectedServices.size(); i++) {
-                System.out.println((i + 1) + ". " + selectedServices.get(i));
+            for (String record : historyReport) {
+                System.out.println("[RECORD] " + record);
             }
         }
+feature/UC8-bookinghistoryandreporting
+
+        System.out.println("============================================");
+        System.out.println("Total Records Processed: " + historyReport.size());
+
  feature/UC7-addonserviceselection
         System.out.println("\nTotal services added: " + selectedServices.size());
 
@@ -231,6 +247,7 @@ dev
 dev
  dev
 dev
+ dev
  dev
  dev
  dev
