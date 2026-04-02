@@ -1,3 +1,10 @@
+ feature/UC7-addonserviceselection
+import java.util.ArrayList;
+import java.util.List;
+
+public class UseCase7AddOnServiceSelection {
+    public static void main(String[] args) {
+
  feature/UC5-bookingrequest
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,17 +47,22 @@ public class BookMyStayApp {
         var1.add("Customer_John");
         HashSet var2 = new HashSet();
         System.out.println("--- Processing Room Allocations ---");
+ dev
 
-        while(!var1.isEmpty()) {
-            String var3 = (String)var1.poll();
-            int var10000 = 100 + var2.size();
-            String var4 = "ROOM-" + (var10000 + 1);
-            if (var2.add(var4)) {
-                System.out.println("SUCCESS: " + var3 + " assigned to " + var4);
-            } else {
-                System.out.println("ERROR: Room " + var4 + " is already occupied!");
+        List<String> selectedServices = new ArrayList<>();
+        selectedServices.add("High-Speed WiFi");
+        selectedServices.add("Buffet Breakfast");
+        selectedServices.add("Late Check-out");
+        System.out.println("--- Selected Add-on Services ---");
+        if (selectedServices.isEmpty()) {
+            System.out.println("No extra services selected.");
+        } else {
+            for (int i = 0; i < selectedServices.size(); i++) {
+                System.out.println((i + 1) + ". " + selectedServices.get(i));
             }
         }
+ feature/UC7-addonserviceselection
+        System.out.println("\nTotal services added: " + selectedServices.size());
 
         System.out.println("\nTotal Rooms Allocated Today: " + var2.size());
 
@@ -219,6 +231,7 @@ dev
 dev
  dev
 dev
+ dev
  dev
  dev
     }
