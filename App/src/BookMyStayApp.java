@@ -1,5 +1,8 @@
  feature/UC10-bookingcancellationandinventoryrollback
 import java.util.*;
+ feature/UC11-concurrentbookingsimulation
+import java.util.concurrent.*;
+
 class IllegalCancellationException extends Exception {
 
     public IllegalCancellationException(String message) {
@@ -10,6 +13,7 @@ class BookingValidationException extends Exception {
         super(message);
     }
 }
+ dev
 
  feature/UC7-addonserviceselection
 import java.util.ArrayList;
@@ -17,24 +21,42 @@ import java.util.List;
  dev
 
 public class BookMyStayApp {
+    private static int suiteInventory = 2;
+    private static final Object lock = new Object();
+    private static List<String> history = Collections.synchronizedList(new ArrayList<>());
 
-    private static int suiteInventory = 5;
-    private static Stack<String> releasedRooms = new Stack<>();
-    private static Map<String, String> activeBookings = new HashMap<>(); // ID -> RoomType
+    public static void main(String[] args) throws InterruptedException {
 
-    public static void main(String[] args) {
-
-        activeBookings.put("BK-003", "Suite");
-        suiteInventory = 4;
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        String[] guests = {"Alwyn", "John", "Alice", "Bob", "Charlie"};
 
         System.out.println("Initial Inventory: " + suiteInventory);
+        System.out.println("--- Starting Concurrent Bookings ---");
 
-        try {
+        for (String guest : guests) {
+            executor.execute(() -> bookRoom(guest));
+        }
 
-            cancelBooking("BK-003");
-            cancelBooking("BK-999");
-        } catch (IllegalCancellationException e) {
-            System.err.println("[CANCELLATION REJECTED] " + e.getMessage());
+ feature/UC11-concurrentbookingsimulation
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+
+        System.out.println("--- All Requests Processed ---");
+        System.out.println("Final Inventory: " + suiteInventory);
+        System.out.println("Final History Size: " + history.size());
+    }
+
+    public static void bookRoom(String guest) {
+        synchronized (lock) {
+            if (suiteInventory > 0) {
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+
+                suiteInventory--;
+                history.add("Guest: " + guest + " | Status: SUCCESS");
+                System.out.println("[CONFIRMED] Room allocated to: " + guest);
+            } else {
+                System.out.println("[FAILED] No rooms left for: " + guest);
+            }
         }
 
  feature/UC10-bookingcancellationandinventoryrollback
@@ -318,6 +340,7 @@ dev
  dev
  dev
 dev
+ dev
  dev
     }
 }
