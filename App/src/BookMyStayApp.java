@@ -1,29 +1,38 @@
+ UC6
+import java.util.*;
+
  UC5
 import java.util.HashSet;
 import java.util.LinkedList;
+ dev
 
  UC3
 import java.util.HashMap;
  dev
 
 public class BookMyStayApp {
-    public static void main(String[] var0) {
-        LinkedList var1 = new LinkedList();
-        var1.add("Customer_Alwyn");
-        var1.add("Customer_John");
-        HashSet var2 = new HashSet();
+    public static void main(String[] args) {
+
+        Queue<String> requests = new LinkedList<>();
+        requests.add("Customer_Alwyn");
+        requests.add("Customer_John");
+
+        Set<String> allocatedRooms = new HashSet<>();
+
         System.out.println("--- Processing Room Allocations ---");
 
-        while(!var1.isEmpty()) {
-            String var3 = (String)var1.poll();
-            int var10000 = 100 + var2.size();
-            String var4 = "ROOM-" + (var10000 + 1);
-            if (var2.add(var4)) {
-                System.out.println("SUCCESS: " + var3 + " assigned to " + var4);
+        while (!requests.isEmpty()) {
+            String customer = requests.poll();
+            String roomId = "ROOM-" + (100 + allocatedRooms.size() + 1);
+            if (allocatedRooms.add(roomId)) {
+                System.out.println("SUCCESS: " + customer + " assigned to " + roomId);
             } else {
-                System.out.println("ERROR: Room " + var4 + " is already occupied!");
+                System.out.println("ERROR: Room " + roomId + " is already occupied!");
             }
         }
+
+ UC6
+        System.out.println("\nTotal Rooms Allocated Today: " + allocatedRooms.size());
 
  UC5
         System.out.println("\nTotal Rooms Allocated Today: " + var2.size());
@@ -90,5 +99,6 @@ public class BookMyStayApp {
 
         System.out.println("Application terminated."); dev
 dev
+ dev
     }
 }
