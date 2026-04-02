@@ -1,50 +1,42 @@
-mport java.util.*;
-class IllegalCancellationException extends Exception {
-    public IllegalCancellationException(String message) {
-        super(message);
-    }
-}
+import java.util.*;
+import java.util.concurrent.*;
 
 public class BookMyStayApp {
+    private static int suiteInventory = 2;
+    private static final Object lock = new Object();
+    private static List<String> history = Collections.synchronizedList(new ArrayList<>());
 
-    private static int suiteInventory = 5;
-    private static Stack<String> releasedRooms = new Stack<>();
-    private static Map<String, String> activeBookings = new HashMap<>(); // ID -> RoomType
+    public static void main(String[] args) throws InterruptedException {
 
-    public static void main(String[] args) {
-
-        activeBookings.put("BK-003", "Suite");
-        suiteInventory = 4;
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        String[] guests = {"Alwyn", "John", "Alice", "Bob", "Charlie"};
 
         System.out.println("Initial Inventory: " + suiteInventory);
+        System.out.println("--- Starting Concurrent Bookings ---");
 
-        try {
-
-            cancelBooking("BK-003");
-            cancelBooking("BK-999");
-        } catch (IllegalCancellationException e) {
-            System.err.println("[CANCELLATION REJECTED] " + e.getMessage());
+        for (String guest : guests) {
+            executor.execute(() -> bookRoom(guest));
         }
 
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+
+        System.out.println("--- All Requests Processed ---");
         System.out.println("Final Inventory: " + suiteInventory);
-        System.out.println("Rooms ready for re-assignment: " + releasedRooms);
+        System.out.println("Final History Size: " + history.size());
     }
 
-    public static void cancelBooking(String bookingId) throws IllegalCancellationException {
-        if (!activeBookings.containsKey(bookingId)) {
-            throw new IllegalCancellationException("Booking ID " + bookingId + " not found or already cancelled.");
+    public static void bookRoom(String guest) {
+        synchronized (lock) {
+            if (suiteInventory > 0) {
+                try { Thread.sleep(100); } catch (InterruptedException e) {}
+
+                suiteInventory--;
+                history.add("Guest: " + guest + " | Status: SUCCESS");
+                System.out.println("[CONFIRMED] Room allocated to: " + guest);
+            } else {
+                System.out.println("[FAILED] No rooms left for: " + guest);
+            }
         }
-
-        String roomType = activeBookings.get(bookingId);
-
-        if (roomType.equals("Suite")) {
-            suiteInventory++;
-
-            releasedRooms.push("ROOM-" + bookingId.split("-")[1]);
-        }
-
-        activeBookings.remove(bookingId);
-
-        System.out.println("[SUCCESS] Cancellation processed for " + bookingId);
     }
 }
